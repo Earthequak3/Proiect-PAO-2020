@@ -1,22 +1,15 @@
 package com.company;
-import java.util.Scanner;
 
-
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
-
-        Manager Ionn = new Manager("Ion", "Becali", "info", 2);
-
-
-        angajat b = new angajat("Andreea", "Petre", "info", 1, Ionn);
-        CEO c = new CEO("Habar", "N-am", "info", 3);
+    public static void main(String[] args) throws IOException {
 
         AngajatiService servicii = new AngajatiService();
-        servicii.add_Angajat(c);
-        servicii.add_Angajat(Ionn);
+
+        servicii.readPersonsFromFile();
         int k = 99;
         while (k != 0) {
         System.out.println("Apasati tasta corespunzatoare comenzii:");
@@ -25,6 +18,10 @@ public class Main {
         System.out.println("3.Calcularea salariului unui angajat dupa nume");
         System.out.println("4.Afla ID-ul unui angajat folosind numele");
         System.out.println("5.Afisare angajati sortati dupa rank");
+        System.out.println("6.Afisarea echipei unui manager");
+        System.out.println("7.Afisare lista managerilor care pot coordona un proiect");
+        System.out.println("11.Scriere CSV");
+        System.out.println("0.Pentru a iesi din program");
 
         Scanner in = new Scanner(System.in);
             k = in.nextInt();
@@ -42,11 +39,13 @@ public class Main {
                     if (d == 1) domeniul = "info";
                     System.out.println("Status: 1.Angajat/2.Manager");
                     int g = in.nextInt();
+
                     if (g == 1) {
                         Angajati a = new Angajati(name, lname, domeniul, g);
-                        angajat l = new angajat(a,servicii.disponibil(a));
+                        Employee l = new Employee(a,servicii.disponibil(a));
                         System.out.println(servicii.disponibil(l).getLast_name());
-                        servicii.add_Angajat(a);
+                        servicii.add_Angajat(l);
+                        servicii.disponibil(l).lista_Employee.add(l);
                     } else {
                         Angajati a = new Angajati(name, lname, domeniul, g);
                         Manager t = new Manager(a);
@@ -55,6 +54,7 @@ public class Main {
                     break;
                 case (2):
                     servicii.afisare_angajati();
+                   // servicii.writePersonsToFile();
                     break;
                 case(3):
                     System.out.println("Numele angajatului");
@@ -73,7 +73,20 @@ public class Main {
                 case(5):
                     servicii.sort_angajati();
                     servicii.afisare_angajati();
+                    break;
+                case(6):
+                    System.out.println("Numele angajatului");
+                    name = in.nextLine();
+                    servicii.get_Manager_byname(name).Afisare_echipa();
+                    break;
+                case(7):
+                    servicii.afis_manager_proiect();
+                case(11):
+                    servicii.writePersonsToFile();
             }
+
+
+
 
         }
     }

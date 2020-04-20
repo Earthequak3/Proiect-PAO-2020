@@ -12,16 +12,13 @@ public class Angajati {
     protected String domeniul_str;
     public String getSef_id(){
         return "Nu am sef";
-    };
-
-
-
+    }
 
     public Angajati(String first_name,String last_name,String domeniul,int status){
         this.first_name = first_name;
         this.last_name = last_name;
        this.domeniul_str = domeniul;
-        if(domeniul == "info")
+        if(domeniul.equals("info"))
         this.domeniul = 2;
         else this.domeniul = 1;
         this.status = status;
@@ -30,7 +27,10 @@ public class Angajati {
         ID++;
         real_id = "" + status + this.domeniul + ID;
     }
-    public Angajati(){};
+    public Angajati(){
+        this.first_name = "";
+        this.last_name = "";
+    }
 
     public String getReal_id(){
         return real_id;
