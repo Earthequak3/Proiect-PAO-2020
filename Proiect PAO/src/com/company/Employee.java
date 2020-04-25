@@ -1,6 +1,6 @@
 package com.company;
 
-public class Employee extends Angajati {
+public class Employee extends Angajat {
 
     private String sef_id;
 
@@ -11,12 +11,13 @@ public class Employee extends Angajati {
 
 
     }
-    public Employee(Angajati a,Manager sef){
+    public Employee(Angajat a, Manager sef){
         super(a.getFirst_name(),a.getLast_name(),a.domeniul_str,a.status);
         sef_id = sef.getReal_id();
         sef.limit++;
 
     }
+    public Employee(){}
 
     public String getSef_id(){
         return sef_id;

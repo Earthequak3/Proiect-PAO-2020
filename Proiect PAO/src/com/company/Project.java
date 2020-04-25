@@ -10,7 +10,9 @@ public class Project {
         this.manager = b;
         this.nume = nume;
         this.date = new Date();
+        b.project ++;
     }
+    Project(){}
 
 
 }

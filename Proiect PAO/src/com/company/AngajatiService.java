@@ -3,20 +3,41 @@ package com.company;
 import com.company.expetion.PersonNotFoundException;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 
 public class AngajatiService {
 
-    private List<Angajati> lista_angajati = new ArrayList<>();
-    private List<Manager> lista_manageri = new ArrayList<>();
-    HashMap<String,Angajati> Lista = new HashMap<>();
+    private final static String EMPLOYEE_PATH = "Employee.csv";
+    private final static String MANAGER_PATH = "Manager.csv";
+    private final static String CEO_PATH = "CEO.csv";
+    private final static String PROJECT_PATH = "Proiect.csv";
+    private BufferedWriter writer;
+    private List<Project> lista_proiecte;
+    private List<Angajat> lista_angajati;
+    private List<Manager> lista_manageri;
+    HashMap<String, Angajat> Lista = new HashMap<>();
+
+  /*  File Employee_file = new File(EMPLOYEE_PATH);
+    File economistFile = new File(MANAGER_PATH);
+    File mecanicFile = new File(CEO_PATH);
+    File dirgnrlFile = new File(PROJECT_PATH);
+
+   */
+
+    public AngajatiService() throws IOException{
+        this.writer = Files.newBufferedWriter(Paths.get("audit.csv"));
+        this.lista_manageri = new ArrayList<>();
+        this.lista_angajati = new ArrayList<>();
+        this.lista_proiecte = new ArrayList<>();
+
+    }
 
 
-    public void add_Angajat(Angajati a) {
+
+    public void add_Angajat(Angajat a) {
 
         lista_angajati.add(a);
         Lista.put(a.getName(),a);
@@ -28,7 +49,7 @@ public class AngajatiService {
     }
 
     public void afisare_angajati() {
-        for (Angajati ang : lista_angajati) {
+        for (Angajat ang : lista_angajati) {
             System.out.println(ang.getName());
 
         }
@@ -44,17 +65,35 @@ public class AngajatiService {
     public void afis_manager_proiect() {
 
         for (Manager ang : lista_manageri) {
-            if(ang.limit !=0 )
+            if(ang.limit !=0 && ang.project == 0)
             System.out.println(ang.getName());
 
         }
+    }
+
+
+    public void creare_proiect(String nume,String nume_m) {
+
+            Project p = new Project(get_Manager_byname(nume_m), nume);
+            lista_proiecte.add(p);
+            return;
+
+    }
+    public void afisare_proiecte(){
+            for(Project p : lista_proiecte)
+            {
+                System.out.println(p.date);
+                System.out.println(p.nume);
+                System.out.println("Manager responsabil:");
+                System.out.println(p.manager.getName());
+            }
     }
 
     public void sort_angajati(){
         Collections.sort(lista_angajati,new Compare());
     }
 
-    public Manager disponibil(Angajati a){
+    public Manager disponibil(Angajat a){
         Manager m = new Manager(a);
       for (Manager ang : lista_manageri){
           String domeniul = "";
@@ -65,8 +104,8 @@ public class AngajatiService {
 
             return m;
         }
-        public Angajati getAngajat_byname(String name){
-            for(Angajati ang : lista_angajati) {
+        public Angajat getAngajat_byname(String name){
+            for(Angajat ang : lista_angajati) {
                 if (ang.getName().equalsIgnoreCase(name))
                     return ang;
         }
@@ -81,35 +120,99 @@ public class AngajatiService {
         throw new PersonNotFoundException("Could not find person: " + name);
     }
 
-    public void readPersonsFromFile() {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("date.csv"))) {
-            String currentLine;
-            while ((currentLine = bufferedReader.readLine()) != null) {
-                String[] dataFields = currentLine.split(",");
+    public void marire(Angajat a,int procent){
+        double b = (a.calc_salariu() * procent) / 100;
+        System.out.println(a.calc_salariu() + b);
 
-                Angajati a = new Angajati(dataFields[0], dataFields[1],dataFields[2],Integer.parseInt(dataFields[3]));
-                if(a.status == 1) {
-                    Employee b = new Employee(a, disponibil(a));
-                    lista_angajati.add(b);
-                    disponibil(b).lista_Employee.add(b);
-                }
-                else {
-                Manager b = new Manager(a);
-                    lista_angajati.add(b);
-                    lista_manageri.add(b);
-                }
-
-            }
-        } catch (IOException e) {
-            System.out.println("Could not read data from file: " + e.getMessage());
-            return;
-        }
-        System.out.println("Successfully read " + lista_angajati.size() + " persons!");
     }
+
+    public <T> void  readPersonsFromFile(T obiect) {
+
+        if (obiect instanceof CEO) {
+            int k = 0;
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CEO_PATH))) {
+                String currentLine;
+                while ((currentLine = bufferedReader.readLine()) != null) {
+                    String[] dataFields = currentLine.split(",");
+
+                    CEO a = new CEO(dataFields[0], dataFields[1], dataFields[2], Integer.parseInt(dataFields[3]));
+                    lista_angajati.add(a);
+                    k++;
+                    }
+
+
+            } catch (IOException e) {
+                System.out.println("Could not read data from file: " + e.getMessage());
+                return;
+            }
+            System.out.println("Successfully read " + k + " CEOs!");
+        }
+
+        if (obiect instanceof Manager) {
+            int k = 0;
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(MANAGER_PATH))) {
+                String currentLine;
+                while ((currentLine = bufferedReader.readLine()) != null) {
+                    String[] dataFields = currentLine.split(",");
+
+                    Manager a = new Manager(dataFields[0], dataFields[1], dataFields[2], Integer.parseInt(dataFields[3]));
+                    lista_angajati.add(a);
+                    lista_manageri.add(a);
+                    k++;
+                }
+
+
+            } catch (IOException e) {
+                System.out.println("Could not read data from file: " + e.getMessage());
+                return;
+            }
+            System.out.println("Successfully read " + k + " managers!");
+        }
+
+        if (obiect instanceof Employee) {
+            int k = 0;
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(EMPLOYEE_PATH))) {
+                String currentLine;
+                while ((currentLine = bufferedReader.readLine()) != null) {
+                    String[] dataFields = currentLine.split(",");
+                    Angajat a = new Angajat(dataFields[0], dataFields[1], dataFields[2], Integer.parseInt(dataFields[3]));
+                    Employee b = new Employee(a,disponibil(a));
+                    lista_angajati.add(b);
+                    k++;
+                }
+
+
+            } catch (IOException e) {
+                System.out.println("Could not read data from file: " + e.getMessage());
+                return;
+            }
+            System.out.println("Successfully read " + k + " employees!");
+        }
+
+        if(obiect instanceof Project){
+            int k = 0;
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(PROJECT_PATH))) {
+                String currentLine;
+                while ((currentLine = bufferedReader.readLine()) != null) {
+                    String[] dataFields = currentLine.split(",");
+                    Project p = new Project(get_Manager_byname(dataFields[0]),dataFields[1]);
+                    lista_proiecte.add(p);
+                    k++;
+                }
+
+
+            } catch (IOException e) {
+                System.out.println("Could not read data from file: " + e.getMessage());
+                return;
+            }
+            System.out.println("Successfully read " + k + " projects!");
+        }
+        }
+
 
     public void writePersonsToFile() {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("out.csv"))) {
-            for (Angajati ang : lista_angajati) {
+            for (Angajat ang : lista_angajati) {
                 bufferedWriter.write(ang.getName() + ", Salariul:" + ang.calc_salariu() + ", ID:" + ang.getReal_id());
                 bufferedWriter.newLine();
             }
@@ -120,5 +223,16 @@ public class AngajatiService {
         System.out.println("Successfully wrote " + lista_angajati.size() + " persons!");
     }
 
-
+    public void logs(String action_name) {
+        Date timestamp = new Date();
+        String printLogs = action_name + ", " + timestamp;
+        try {
+            writer.write(printLogs);
+            writer.newLine();
+            writer.flush();
+        }
+        catch (IOException e){
+            System.out.println("Problema la audit!");
+        }
+    }
 }
