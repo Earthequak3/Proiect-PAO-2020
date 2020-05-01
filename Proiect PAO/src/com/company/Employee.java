@@ -17,7 +17,7 @@ public class Employee extends Angajat {
         sef.limit++;
 
     }
-    public Employee(){}
+
 
     public String getSef_id(){
         return sef_id;

@@ -15,13 +15,11 @@ public class Manager extends Angajat {
         super(a.getFirst_name(),a.getLast_name(),a.domeniul_str,a.status);
         this.project = 0;
     }
-    public Manager(){}
+
     public int limit;
     @Override
     public boolean check_limit(){
-        if(limit == 4)
-            return false;
-        return true;
+        return limit != 4;
     }
 
     public List<Employee> lista_Employee = new ArrayList<>();

@@ -27,10 +27,6 @@ public class Angajat {
         ID++;
         real_id = "" + status + this.domeniul + ID;
     }
-    public Angajat(){
-        this.first_name = "";
-        this.last_name = "";
-    }
 
     public String getReal_id(){
         return real_id;

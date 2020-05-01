@@ -1,4 +1,8 @@
 package com.company;
+import com.company.persistance.Persistance_CEO;
+import com.company.persistance.Persistance_Manager;
+import com.company.persistance.Persistence_Employee;
+import com.company.persistance.Persistence_Project;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -7,21 +11,24 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        CEO CEO = new CEO();
-        Manager manager = new Manager();
-        Employee emp = new Employee();
-        Project project = new Project();
 
+        Persistance_Manager persistance_manager = Persistance_Manager.getInstance();
+        Persistence_Employee persistence_employee = Persistence_Employee.getInstance();
+        Persistance_CEO persistance_ceo = Persistance_CEO.getInstance();
+        Persistence_Project persistence_project = Persistence_Project.getInstance();
         AngajatiService servicii = new AngajatiService();
 
         servicii.logs("citire_csv_CEO");
-        servicii.readPersonsFromFile(CEO);
+        persistance_ceo.readPersonsFromFile(servicii);
+
         servicii.logs("citire_csv_manageri");
-        servicii.readPersonsFromFile(manager);
+        persistance_manager.readPersonsFromFile(servicii);
+
+        persistence_employee.readPersonsFromFile(servicii);
         servicii.logs("citire_csv_angajati");
-        servicii.readPersonsFromFile(emp);
+
         servicii.logs("citire_csv_proiect");
-        servicii.readPersonsFromFile(project);
+        persistence_project.readProjectFromFile(servicii);
 
 
 
@@ -59,14 +66,13 @@ public class Main {
                     System.out.println("Status: 1.Angajat/2.Manager");
                     int g = in.nextInt();
 
+                    Angajat a = new Angajat(name, lname, domeniul, g);
                     if (g == 1) {
-                        Angajat a = new Angajat(name, lname, domeniul, g);
                         Employee l = new Employee(a,servicii.disponibil(a));
                         System.out.println(servicii.disponibil(l).getLast_name());
                         servicii.add_Angajat(l);
                         servicii.disponibil(l).lista_Employee.add(l);
                     } else {
-                        Angajat a = new Angajat(name, lname, domeniul, g);
                         Manager t = new Manager(a);
                         servicii.add_Angajat(t);
                     }

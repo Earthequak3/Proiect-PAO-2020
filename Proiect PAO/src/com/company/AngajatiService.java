@@ -10,14 +10,11 @@ import java.util.*;
 
 public class AngajatiService {
 
-    private final static String EMPLOYEE_PATH = "Employee.csv";
-    private final static String MANAGER_PATH = "Manager.csv";
-    private final static String CEO_PATH = "CEO.csv";
-    private final static String PROJECT_PATH = "Proiect.csv";
+
     private BufferedWriter writer;
-    private List<Project> lista_proiecte;
-    private List<Angajat> lista_angajati;
-    private List<Manager> lista_manageri;
+    public  List<Project> lista_proiecte;
+    public  List<Angajat> lista_angajati;
+    public List<Manager> lista_manageri;
     HashMap<String, Angajat> Lista = new HashMap<>();
 
   /*  File Employee_file = new File(EMPLOYEE_PATH);
@@ -54,14 +51,14 @@ public class AngajatiService {
 
         }
     }
-
+/*
     public void afisare_manageri(){
         for (Manager ang : lista_manageri) {
             System.out.println(ang.getName());
 
         }
     }
-
+*/
     public void afis_manager_proiect() {
 
         for (Manager ang : lista_manageri) {
@@ -76,7 +73,6 @@ public class AngajatiService {
 
             Project p = new Project(get_Manager_byname(nume_m), nume);
             lista_proiecte.add(p);
-            return;
 
     }
     public void afisare_proiecte(){
@@ -90,7 +86,7 @@ public class AngajatiService {
     }
 
     public void sort_angajati(){
-        Collections.sort(lista_angajati,new Compare());
+        lista_angajati.sort(new Compare());
     }
 
     public Manager disponibil(Angajat a){
@@ -126,88 +122,7 @@ public class AngajatiService {
 
     }
 
-    public <T> void  readPersonsFromFile(T obiect) {
 
-        if (obiect instanceof CEO) {
-            int k = 0;
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CEO_PATH))) {
-                String currentLine;
-                while ((currentLine = bufferedReader.readLine()) != null) {
-                    String[] dataFields = currentLine.split(",");
-
-                    CEO a = new CEO(dataFields[0], dataFields[1], dataFields[2], Integer.parseInt(dataFields[3]));
-                    lista_angajati.add(a);
-                    k++;
-                    }
-
-
-            } catch (IOException e) {
-                System.out.println("Could not read data from file: " + e.getMessage());
-                return;
-            }
-            System.out.println("Successfully read " + k + " CEOs!");
-        }
-
-        if (obiect instanceof Manager) {
-            int k = 0;
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(MANAGER_PATH))) {
-                String currentLine;
-                while ((currentLine = bufferedReader.readLine()) != null) {
-                    String[] dataFields = currentLine.split(",");
-
-                    Manager a = new Manager(dataFields[0], dataFields[1], dataFields[2], Integer.parseInt(dataFields[3]));
-                    lista_angajati.add(a);
-                    lista_manageri.add(a);
-                    k++;
-                }
-
-
-            } catch (IOException e) {
-                System.out.println("Could not read data from file: " + e.getMessage());
-                return;
-            }
-            System.out.println("Successfully read " + k + " managers!");
-        }
-
-        if (obiect instanceof Employee) {
-            int k = 0;
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(EMPLOYEE_PATH))) {
-                String currentLine;
-                while ((currentLine = bufferedReader.readLine()) != null) {
-                    String[] dataFields = currentLine.split(",");
-                    Angajat a = new Angajat(dataFields[0], dataFields[1], dataFields[2], Integer.parseInt(dataFields[3]));
-                    Employee b = new Employee(a,disponibil(a));
-                    lista_angajati.add(b);
-                    k++;
-                }
-
-
-            } catch (IOException e) {
-                System.out.println("Could not read data from file: " + e.getMessage());
-                return;
-            }
-            System.out.println("Successfully read " + k + " employees!");
-        }
-
-        if(obiect instanceof Project){
-            int k = 0;
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(PROJECT_PATH))) {
-                String currentLine;
-                while ((currentLine = bufferedReader.readLine()) != null) {
-                    String[] dataFields = currentLine.split(",");
-                    Project p = new Project(get_Manager_byname(dataFields[0]),dataFields[1]);
-                    lista_proiecte.add(p);
-                    k++;
-                }
-
-
-            } catch (IOException e) {
-                System.out.println("Could not read data from file: " + e.getMessage());
-                return;
-            }
-            System.out.println("Successfully read " + k + " projects!");
-        }
-        }
 
 
     public void writePersonsToFile() {
