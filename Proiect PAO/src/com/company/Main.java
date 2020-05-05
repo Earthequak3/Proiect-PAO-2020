@@ -1,34 +1,38 @@
 package com.company;
-import com.company.persistance.Persistance_CEO;
-import com.company.persistance.Persistance_Manager;
-import com.company.persistance.Persistence_Employee;
-import com.company.persistance.Persistence_Project;
 
-import java.io.IOException;
+import com.company.entities.Angajat;
+import com.company.entities.Employee;
+import com.company.entities.Manager;
+import com.company.persistance.citireCeo;
+import com.company.persistance.citireEmployee;
+import com.company.persistance.citireManageri;
+import com.company.persistance.citireProiect;
+import com.company.services.angajatiService;
+
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
 
-        Persistance_Manager persistance_manager = Persistance_Manager.getInstance();
-        Persistence_Employee persistence_employee = Persistence_Employee.getInstance();
-        Persistance_CEO persistance_ceo = Persistance_CEO.getInstance();
-        Persistence_Project persistence_project = Persistence_Project.getInstance();
-        AngajatiService servicii = new AngajatiService();
+        citireManageri persistanceManager = citireManageri.getInstance();
+        citireEmployee persistenceEmployee = citireEmployee.getInstance();
+        citireCeo persistanceCeo = citireCeo.getInstance();
+        citireProiect persistenceProiect = citireProiect.getInstance();
+        angajatiService service = new angajatiService();
 
-        servicii.logs("citire_csv_CEO");
-        persistance_ceo.readPersonsFromFile(servicii);
+        service.logs("citire_csv_CEO");
+        persistanceCeo.readPersonsFromFile(service);
 
-        servicii.logs("citire_csv_manageri");
-        persistance_manager.readPersonsFromFile(servicii);
+        service.logs("citire_csv_manageri");
+        persistanceManager.readPersonsFromFile(service);
 
-        persistence_employee.readPersonsFromFile(servicii);
-        servicii.logs("citire_csv_angajati");
+        persistenceEmployee.readPersonsFromFile(service);
+        service.logs("citire_csv_angajati");
 
-        servicii.logs("citire_csv_proiect");
-        persistence_project.readProjectFromFile(servicii);
+        service.logs("citire_csv_proiect");
+        persistenceProiect.readProjectFromFile(service);
 
 
 
@@ -68,73 +72,75 @@ public class Main {
 
                     Angajat a = new Angajat(name, lname, domeniul, g);
                     if (g == 1) {
-                        Employee l = new Employee(a,servicii.disponibil(a));
-                        System.out.println(servicii.disponibil(l).getLast_name());
-                        servicii.add_Angajat(l);
-                        servicii.disponibil(l).lista_Employee.add(l);
+                        Employee l = new Employee(a,service.isAvailable(a));
+                        System.out.println(service.isAvailable(l).getLastName());
+                        service.addAngajat(l);
+                        service.isAvailable(l).listaEmployee.add(l);
                     } else {
                         Manager t = new Manager(a);
-                        servicii.add_Angajat(t);
+                        service.addAngajat(t);
                     }
-                    servicii.logs("Citirea unui angajat");
+                    service.logs("Citirea unui angajat");
                     break;
                 case (2):
-                    servicii.afisare_angajati();
-                    servicii.writePersonsToFile();
-                    servicii.logs("Afisarea_angajati");
+                    service.printEmployees();
+                    service.writePersonsToFile();
+                    service.logs("Afisarea_angajati");
                     break;
                 case(3):
                     System.out.println("Numele angajatului");
                      name = in.nextLine();
-                  System.out.println(servicii.getAngajat_byname(name).calc_salariu());
-                  servicii.logs("Calcularea salariului" + name);
+                  System.out.println(service.getAngajatByname(name).calc_salariu());
+                  service.logs("Calcularea salariului" + name);
                   break;
                 case(4):
                     System.out.println("Numele angajatului");
                    name = in.nextLine();
-                    System.out.println(servicii.Lista.get(name).getReal_id());
-                    if(servicii.getAngajat_byname(name).status == 1){
+                    System.out.println(service.lista.get(name).getReal_id());
+                    if(service.getAngajatByname(name).getStatus() == 1){
                         System.out.println("ID-ul managerului responsabil este : ");
-                        System.out.println(servicii.Lista.get(name).getSef_id());
+                        System.out.println(service.lista.get(name).getSefId());
                     }
-                    servicii.logs("Aflarea ID-ului angajatului" + name);
+                    service.logs("Aflarea ID-ului angajatului" + name);
                     break;
                 case(5):
-                    servicii.sort_angajati();
-                    servicii.afisare_angajati();
-                    servicii.logs("Afisare_angajati dupa rank");
+                    service.sortAngajati();
+                    service.printEmployees();
+                    service.logs("Afisare_angajati dupa rank");
                     break;
                 case(6):
                     System.out.println("Numele angajatului");
                     name = in.nextLine();
-                    servicii.get_Manager_byname(name).Afisare_echipa();
-                    servicii.logs("Afisare_echipa_manager" + name);
+                    service.getManagerByname(name).Afisare_echipa();
+                    service.logs("Afisare_echipa_manager" + name);
                     break;
                 case(7):
-                    servicii.afis_manager_proiect();
-                    servicii.logs("Afisare_manageri_eligibili");
+                    service.printProjectManager();
+                    service.logs("Afisare_manageri_eligibili");
                     break;
                 case(8):
                     System.out.println("Numele Proiectului");
                     name = in.nextLine();
                     System.out.println("Numele Managerului");
                     String name_m = in.nextLine();
-                   servicii.creare_proiect(name,name_m);
-                   servicii.logs("Adaugare proiect _ " + name);
+                   service.createProject(name,name_m);
+                   service.logs("Adaugare proiect _ " + name);
                    break;
                 case(9):
-                    servicii.afisare_proiecte();
-                    servicii.logs("Afisare_proiecte");
+                    service.printProjects();
+                    service.logs("Afisare_proiecte");
                     break;
                 case(10):
                     System.out.println("Numele angajatului");
                     name = in.nextLine();
                     System.out.println("Ce procent?");
                     int procent = in.nextInt();
-                    servicii.marire(servicii.getAngajat_byname(name),procent);
+                    service.raising(service.getAngajatByname(name),procent);
+                    service.logs("Marire salariu _ " + name + " cu " + procent + " % ");
                     break;
                 case(11):
-                    servicii.writePersonsToFile();
+                    service.writePersonsToFile();
+                    service.logs("Scriere in fisier csv");
                     break;
             }
 
